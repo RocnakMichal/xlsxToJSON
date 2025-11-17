@@ -1,50 +1,67 @@
-﻿using Newtonsoft.Json;
+﻿using DocumentFormat.OpenXml.Math;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 
 
 
 
-string xlsxFile = @"C:\Users\Michal Ročňák\Desktop\Příklad - zakázky do JSON.xlsx";
+string? xlsxFile = @"C:\Users\Michal Ročňák\Desktop\Příklad - zakázky do JSON.xlsx";
 
 //fronta pro více vstupů
 Queue<string> fileQueue = new Queue<string>();
 
+// tabulky jsou ve stejném souboru jako program
+string? baseDir = AppContext.BaseDirectory;
+if (baseDir == null) throw new InvalidOperationException("Složka neexistuje");
+
+string projectDir = Directory.GetParent(baseDir).Parent.Parent.Parent.FullName;
+
 while (true)
 {
-
 // vstup z konzole
-    Console.WriteLine("Zadejte název souboru ");
+    Console.WriteLine("Zadejte název souboru, pokud chceš převést více souborů, odděl je čárkou  ");
     xlsxFile = Console.ReadLine();
     if (string.Equals(xlsxFile, "konec", StringComparison.OrdinalIgnoreCase) || xlsxFile == null)
     {
         Console.WriteLine("Program ukončen.");
         break;
     }
+    if (string.Equals(xlsxFile, "vse", StringComparison.OrdinalIgnoreCase))
+    {   
+        //hledá vše, co končí .xlsx, nemusí se nic dolňovat, protože soubory jsou takto uloženy
+        var allFiles = Directory.GetFiles(projectDir, "*.xlsx", SearchOption.TopDirectoryOnly);
 
+        if (allFiles.Length == 0)
+        {
+            Console.WriteLine("Nenalezeny žádné .xlsx soubory.");
+            continue;
+        }
 
-
-
-
-//Console.WriteLine($"Soubor: {filePath}");
-
-
-    // rozdělení vstupu, delimiter- " " 
-    string[] fileNames = xlsxFile.Split(',', StringSplitOptions.RemoveEmptyEntries);
-    // naplnění fronty
-    foreach (var file in fileNames)
-        fileQueue.Enqueue(file);
-
-    foreach (var a in fileNames)
-    {
-        Console.WriteLine(a);
+        foreach (var file in allFiles)
+        {
+            fileQueue.Enqueue(Path.GetFileName(file));  
+        }
     }
+    else
+    {
+        // rozdělení vstupu, delimiter-"," 
+        string[] fileNames = xlsxFile.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        // naplnění fronty
+        foreach (var file in fileNames)
+            fileQueue.Enqueue(file);
+
+        foreach (var a in fileNames)
+        {
+            Console.WriteLine(a);
+        }
+    }
+
     while (fileQueue.Count > 0)
     {
         
         xlsxFile = fileQueue.Dequeue();
         // tabulky jsou ve stejném souboru jako program
-        string baseDir = AppContext.BaseDirectory;
-        string projectDir = Directory.GetParent(baseDir).Parent.Parent.Parent.FullName;
+        
         string filePath = Path.Combine(projectDir, xlsxFile);
 
 
@@ -85,9 +102,21 @@ static void ProcessExcelFile(string fileName)
         using (var package = new ExcelPackage(new FileInfo(fileName)))
         {
             var workbook = package.Workbook;
+            // ošetření prázdného sešitu
+            if (workbook == null || workbook.Worksheets.Count == 0)
+            {
+                Console.WriteLine($"Soubor '{Path.GetFileName(fileName)}' je prázdný");
+                return;
+            }
             // Použití prvního listu
             var worksheet = workbook.Worksheets[0];
 
+            
+            if (worksheet.Dimension == null)
+            {
+                Console.WriteLine($"Soubor '{Path.GetFileName(fileName)}' obsahuje prázdný list.");
+                return;
+            }
             int rows = worksheet.Dimension.Rows;
             // int columns = worksheet.Dimension.Columns;
 
