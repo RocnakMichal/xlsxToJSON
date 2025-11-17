@@ -6,6 +6,8 @@ using OfficeOpenXml;
 
 string xlsxFile = @"C:\Users\Michal Ročňák\Desktop\Příklad - zakázky do JSON.xlsx";
 
+//fronta pro více vstupů
+Queue<string> fileQueue = new Queue<string>();
 
 while (true)
 {
@@ -20,41 +22,60 @@ while (true)
     }
 
 
-// tabulky jsou ve stejném souboru jako program
-    string baseDir = AppContext.BaseDirectory;
-    string projectDir = Directory.GetParent(baseDir).Parent.Parent.Parent.FullName;
-    string filePath = Path.Combine(projectDir, xlsxFile);
+
 
 
 //Console.WriteLine($"Soubor: {filePath}");
 
-// soubor existuje
-    if (File.Exists(filePath))
-    {
-        ProcessExcelFile(filePath);
 
+    // rozdělení vstupu, delimiter- " " 
+    string[] fileNames = xlsxFile.Split(',', StringSplitOptions.RemoveEmptyEntries);
+    // naplnění fronty
+    foreach (var file in fileNames)
+        fileQueue.Enqueue(file);
+
+    foreach (var a in fileNames)
+    {
+        Console.WriteLine(a);
     }
-// uzivatel zadal nazev souboru bez přípony
-    else
+    while (fileQueue.Count > 0)
     {
-        if (!xlsxFile.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
-        {
-            xlsxFile += ".xlsx";
-            filePath = Path.Combine(projectDir, xlsxFile);
-            Console.WriteLine($"Soubor: {filePath}");
-        }
+        
+        xlsxFile = fileQueue.Dequeue();
+        // tabulky jsou ve stejném souboru jako program
+        string baseDir = AppContext.BaseDirectory;
+        string projectDir = Directory.GetParent(baseDir).Parent.Parent.Parent.FullName;
+        string filePath = Path.Combine(projectDir, xlsxFile);
 
+
+        // soubor existuje
         if (File.Exists(filePath))
         {
             ProcessExcelFile(filePath);
+
         }
+        // uzivatel zadal nazev souboru bez přípony
         else
         {
-            Console.WriteLine("Soubor neexistuje!");
+            if (!xlsxFile.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+            {
+                xlsxFile += ".xlsx";
+                filePath = Path.Combine(projectDir, xlsxFile);
+                Console.WriteLine($"Soubor: {filePath}");
+            }
+
+            if (File.Exists(filePath))
+            {
+                ProcessExcelFile(filePath);
+            }
+            else
+            {
+                Console.WriteLine($"Soubor {filePath} aneexistuje!");
+            }
+
         }
 
     }
-
 }
 
 static void ProcessExcelFile(string fileName)
@@ -105,8 +126,7 @@ static void ProcessExcelFile(string fileName)
                         { "Počet kusů", value } // Hodnota buňky
                     });
                 }
-
-
+                
                 // Uložení kolekce do objektu
                 rowData["dataCollection"] = dataCollection;
 
