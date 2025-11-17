@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "CAM2oTe7Gsg=",
+  "dgSpecHash": "yEjJTCMjYWk=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Michal Ročňák\\RiderProjects\\xlsx-JSON\\xlsx-JSON\\xlsx-JSON.csproj",
+  "projectFilePath": "C:\\Users\\Michal Ročňák\\RiderProjects\\xlsxToJSON\\xlsx-JSON\\xlsx-JSON\\xlsx-JSON.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Michal Ročňák\\.nuget\\packages\\closedxml\\0.105.0\\closedxml.0.105.0.nupkg.sha512",
     "C:\\Users\\Michal Ročňák\\.nuget\\packages\\closedxml.parser\\2.0.0\\closedxml.parser.2.0.0.nupkg.sha512",
