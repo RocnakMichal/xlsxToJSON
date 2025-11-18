@@ -2,6 +2,7 @@
 using OfficeOpenXml;
 
 
+namespace xlsx_JSON;
 
 public class Program
 {
@@ -9,7 +10,7 @@ public class Program
     public static void Main(string[] args)
     {
 
-        string? xlsxFile = @"C:\Users\Michal Ročňák\Desktop\Příklad - zakázky do JSON.xlsx";
+        string? xlsxFile;
 
 //fronta pro více vstupů
         Queue<string> fileQueue = new Queue<string>();
@@ -18,8 +19,7 @@ public class Program
         string? baseDir = AppContext.BaseDirectory;
         if (baseDir == null) throw new InvalidOperationException("Složka neexistuje");
 
-        string projectDir = Directory.GetParent(baseDir).Parent.Parent.Parent.FullName;
-
+        string projectDir = Directory.GetParent(baseDir)?.Parent?.Parent?.Parent?.FullName ?? throw new InvalidOperationException("Nastala chyba v adresáři");
         while (true)
         {
 // vstup z konzole
