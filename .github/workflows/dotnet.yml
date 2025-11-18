@@ -20,11 +20,12 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - name: Go to folder
-      run: cd xlsx-JSON
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: xlsxToJSON/xlsx-JSON
     - name: Build
       run: dotnet build --no-restore
+      working-directory: xlsxToJSON/xlsx-JSON
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      working-directory: xlsxToJSON/xlsx-JSON
