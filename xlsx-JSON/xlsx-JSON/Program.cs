@@ -18,8 +18,12 @@ public class Program
         var baseDir = AppContext.BaseDirectory;
         if (baseDir == null) throw new InvalidOperationException("Složka neexistuje");
 
-        var projectDir = Directory.GetParent(baseDir)?.Parent?.Parent?.Parent?.FullName ??
-                         throw new InvalidOperationException("Nastala chyba v adresáři");
+        Console.WriteLine(baseDir);
+        var projectDir = GetProjectRoot(baseDir);
+        Console.WriteLine(projectDir);
+        
+        
+        
         while (true)
         {
             // vstup z konzole
@@ -100,6 +104,24 @@ public class Program
         if (!fileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase)) return fileName + ".xlsx";
 
         return fileName;
+    }
+    public static string GetProjectRoot(string currentDir)
+    {
+        // Iterujeme dokud se nedostaneme na požadovanou složku /xlsx-JSON je složka, kde se nachází program
+        var dir = new DirectoryInfo(currentDir);
+        while (dir != null)
+        {
+            if (Directory.Exists(Path.Combine(dir.FullName, "xlsx-JSON")))
+            {
+                // Pracovní složka
+                return dir.FullName+"/xlsx-JSON";
+                break;
+            }
+            // Posun o jednu úroveň nahoru
+            dir = dir.Parent;
+        }
+
+        throw new InvalidOperationException("Nelze najít kořenový adresář projektu.");
     }
 
     public static void WriteColorLine(ConsoleColor color, string text)
