@@ -34,6 +34,12 @@ public class Program
                 break;
             }
 
+            if (string.Equals(xlsxFile, "napoveda", StringComparison.OrdinalIgnoreCase))
+            {
+                WriteColorLine(ConsoleColor.Yellow,"Zadej názvy souborů, ktere chces prevest do formatu .json."+"\n"+"Pro převod všech souborů ve složce napiš klíčové slovo VSE" +"\n"+
+                                                   "Pro ukončení napiš klíčové slovo KONEC");
+                continue;
+            }
             if (string.Equals(xlsxFile, "vse", StringComparison.OrdinalIgnoreCase))
             {
                 //hledá vše, co končí .xlsx, nemusí se nic dolňovat, protože soubory jsou takto uloženy
@@ -44,6 +50,9 @@ public class Program
                     WriteColorLine(ConsoleColor.Red,"Nebyly nalezeny žádné .xlsx soubory.");
                     continue;
                 }
+
+
+                
 
                 foreach (var file in allFiles)
                 {
