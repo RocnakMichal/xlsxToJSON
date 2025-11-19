@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("xlsx-JSON")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1d708d6d6174036d0f3fa7226737e805771778d9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4ae6b6cd406f2897ea7df70dbc5fcc31ff2ab864")]
 [assembly: System.Reflection.AssemblyProductAttribute("xlsx-JSON")]
 [assembly: System.Reflection.AssemblyTitleAttribute("xlsx-JSON")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

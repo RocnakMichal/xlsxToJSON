@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using DocumentFormat.OpenXml.Drawing;
+using Newtonsoft.Json;
 using OfficeOpenXml;
+using Path = System.IO.Path;
 
 
 namespace xlsx_JSON;
@@ -23,6 +25,7 @@ public class Program
         while (true)
         {
 // vstup z konzole
+            WriteColorLine(ConsoleColor.Red,"AHPK");
             Console.WriteLine("Zadejte název souboru, pokud chceš převést více souborů, odděl je čárkou  ");
             xlsxFile = Console.ReadLine();
             if (string.Equals(xlsxFile, "konec", StringComparison.OrdinalIgnoreCase) || xlsxFile == null)
@@ -38,7 +41,7 @@ public class Program
 
                 if (allFiles.Length == 0)
                 {
-                    Console.WriteLine("Nenalezeny žádné .xlsx soubory.");
+                    WriteColorLine(ConsoleColor.Red,"Nebyly nalezeny žádné .xlsx soubory.");
                     continue;
                 }
 
@@ -88,7 +91,7 @@ public class Program
                     }
                     else
                     {
-                        Console.WriteLine($"Soubor {filePath} neexistuje!");
+                        WriteColorLine(ConsoleColor.Red,$"Soubor {filePath} neexistuje!");
                     }
 
                 }
@@ -108,7 +111,14 @@ public class Program
         return fileName;
     }
 
-    static void ProcessExcelFile(string fileName)
+    public static void WriteColorLine(ConsoleColor color, string text)
+    {
+        Console.ForegroundColor = color;
+        Console.WriteLine(text);
+        Console.ResetColor();
+    }
+
+    public static void ProcessExcelFile(string fileName)
     {
         try
         {
@@ -118,7 +128,7 @@ public class Program
                 // ošetření prázdného sešitu
                 if (workbook == null || workbook.Worksheets.Count == 0)
                 {
-                    Console.WriteLine($"Soubor '{Path.GetFileName(fileName)}' je prázdný");
+                    WriteColorLine(ConsoleColor.Red,$"Soubor '{Path.GetFileName(fileName)}' je prázdný");
                     return;
                 }
 
@@ -128,7 +138,7 @@ public class Program
 
                 if (worksheet.Dimension == null)
                 {
-                    Console.WriteLine($"Soubor '{Path.GetFileName(fileName)}' obsahuje prázdný list.");
+                    WriteColorLine(ConsoleColor.Red,$"Soubor '{Path.GetFileName(fileName)}' obsahuje prázdný list.");
                     return;
                 }
 
@@ -184,14 +194,13 @@ public class Program
                 // Uložení souboru
                 string jsonPath = Path.ChangeExtension(fileName, ".json");
                 File.WriteAllText(jsonPath, jsonResult);
-
-                Console.WriteLine($"JSON uložen zde: {jsonPath}");
+                WriteColorLine(ConsoleColor.Green,$"JSON je uložen zde: {jsonPath}");
             }
         }
 
         catch (Exception ex)
         {
-            Console.WriteLine($"Došlo k chybě: {ex.Message}");
+            WriteColorLine(ConsoleColor.Red,$"Došlo k chybě: {ex.Message}");
         }
     }
 }
