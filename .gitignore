@@ -1,3 +1,8 @@
 ﻿xlsx-JSON/.idea
 xlsx-JSON/TestResults
 xlsx-JSON/xlsxToJSON.UnitTests
+xlsx-JSON/Test/bin
+xlsx-JSON/Test/obj
+xlsx-JSON/Test/TestResults
+xlsx-JSON/xlsx-JSON/bin
+xlsx-JSON/xlsx-JSON/obj

@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\xlsx-JSON\xlsx-JSON.csproj" />
+        <ProjectReference Include="..\xlsx-JSON\xlsx-JSON.csproj"/>
     </ItemGroup>
 
 </Project>
