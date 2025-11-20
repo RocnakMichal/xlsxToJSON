@@ -21,13 +21,12 @@ public class Program
         Console.WriteLine(baseDir);
         var projectDir = GetProjectRoot(baseDir);
         Console.WriteLine(projectDir);
-        
-        
-        
+
+
+
         while (true)
         {
             // vstup z konzole
-            WriteColorLine(ConsoleColor.Red, "AHPK");
             Console.WriteLine("Zadejte název souboru, pokud chceš převést více souborů, odděl je čárkou  ");
             xlsxFile = Console.ReadLine();
             if (string.Equals(xlsxFile, "konec", StringComparison.OrdinalIgnoreCase) || xlsxFile == null)
@@ -62,7 +61,10 @@ public class Program
             else
             {
                 // rozdělení vstupu, delimiter-"," 
-                string[] fileNames = xlsxFile.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                //string[] fileNames = xlsxFile.Split(',', StringSplitOptions.RemoveEmptyEntries);
+              
+                var fileNames = SplitInput(xlsxFile);
+                
                 // naplnění fronty
                 foreach (var file in fileNames)
                     fileQueue.Enqueue(file);
@@ -97,6 +99,37 @@ public class Program
             }
         }
     }
+    
+    //TODO nacteni do froty jiz pri zpracovani
+    // Zpracovani vstupu na jednotlive nazvy souboru
+    public static List<string> SplitInput(string input)
+    {
+        var result = new List<string>();
+        // nejdříve rozdělíme podle "" a sekundárně poté podle ,
+        var parts = input.Split('"', StringSplitOptions.TrimEntries);
+        for (int i = 0; i < parts.Length; i++)
+        {
+            // vstup v uvozovkách je oddělen sudým počtem
+            if (i % 2 == 1)
+            {
+                if (!string.IsNullOrWhiteSpace(parts[i]))
+                    result.Add(parts[i]);
+            }
+            else
+            {
+                // sekundární oddělování
+                var subparts = parts[i]
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(p => p.Trim());
+
+                result.AddRange(subparts);
+            }
+        }
+
+        return result;
+    }
+
+
 
     //pridani pripony k souboru
     public static string AddXlsx(string fileName)
@@ -114,8 +147,7 @@ public class Program
             if (Directory.Exists(Path.Combine(dir.FullName, "xlsx-JSON")))
             {
                 // Pracovní složka
-                return dir.FullName+"/xlsx-JSON";
-                break;
+                return Path.Combine(dir.FullName, "xlsx-JSON");
             }
             // Posun o jednu úroveň nahoru
             dir = dir.Parent;
