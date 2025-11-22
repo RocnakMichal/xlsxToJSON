@@ -23,7 +23,6 @@ public class Program
         Console.WriteLine(projectDir);
 
 
-
         while (true)
         {
             // vstup z konzole
@@ -62,9 +61,9 @@ public class Program
             {
                 // rozdělení vstupu, delimiter-"," 
                 //string[] fileNames = xlsxFile.Split(',', StringSplitOptions.RemoveEmptyEntries);
-              
+
                 var fileNames = SplitInput(xlsxFile);
-                
+
                 // naplnění fronty
                 foreach (var file in fileNames)
                     fileQueue.Enqueue(file);
@@ -99,7 +98,7 @@ public class Program
             }
         }
     }
-    
+
     //TODO nacteni do froty jiz pri zpracovani
     // Zpracovani vstupu na jednotlive nazvy souboru
     public static List<string> SplitInput(string input)
@@ -107,8 +106,7 @@ public class Program
         var result = new List<string>();
         // nejdříve rozdělíme podle "" a sekundárně poté podle ,
         var parts = input.Split('"', StringSplitOptions.TrimEntries);
-        for (int i = 0; i < parts.Length; i++)
-        {
+        for (var i = 0; i < parts.Length; i++)
             // vstup v uvozovkách je oddělen sudým počtem
             if (i % 2 == 1)
             {
@@ -124,20 +122,25 @@ public class Program
 
                 result.AddRange(subparts);
             }
-        }
 
         return result;
     }
 
-
-
     //pridani pripony k souboru
+    /** <summary>
+     Funkce pro přidání .xlsx přípony k souboru, pokud tak uživatel nedělá.
+     Pouze pro pohodlnější prácí s programem
+     Pokud uživatel zadá název souboru s příponou nic se nepřidá
+    </summary>*/
+    /// <param name="fileName">Vstupní soubor, který uživatel zadá do konzole</param>
+    /// <returns>Vstupní soubor, který postrádal příponu .xlsx ji nyní má.</returns>
     public static string AddXlsx(string fileName)
     {
         if (!fileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase)) return fileName + ".xlsx";
 
         return fileName;
     }
+
     public static string GetProjectRoot(string currentDir)
     {
         // Iterujeme dokud se nedostaneme na požadovanou složku /xlsx-JSON je složka, kde se nachází program
@@ -145,10 +148,8 @@ public class Program
         while (dir != null)
         {
             if (Directory.Exists(Path.Combine(dir.FullName, "xlsx-JSON")))
-            {
                 // Pracovní složka
                 return Path.Combine(dir.FullName, "xlsx-JSON");
-            }
             // Posun o jednu úroveň nahoru
             dir = dir.Parent;
         }
@@ -224,7 +225,7 @@ public class Program
                             // Název sloupce
                             { "Období", columnName },
                             // Hodnota buňky
-                            { "Počet kusů", value } 
+                            { "Počet kusů", value }
                         });
                     }
 
