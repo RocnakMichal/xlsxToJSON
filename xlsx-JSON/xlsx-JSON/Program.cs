@@ -7,9 +7,11 @@ namespace xlsx_JSON;
 
 public class Program
 {
+    public static bool shortJSON = false;
     public static void Main(string[] args)
     {
         string? xlsxFile;
+       
 
         //fronta pro více vstupů
         var fileQueue = new Queue<string>();
@@ -40,6 +42,10 @@ public class Program
                                                     "\n" +
                                                     "Pro převod všech souborů ve složce napiš klíčové slovo VSE" +
                                                     "\n" +
+                                                    "Pro kratší JSON soubor napiš kratsi zapis" +
+                                                    "\n" +
+                                                    "Pro delší JSON soubor napiš delsi zapis" +
+                                                    "\n" +
                                                     "Pro ukončení napiš klíčové slovo KONEC");
                 continue;
             }
@@ -56,6 +62,18 @@ public class Program
                 }
 
                 foreach (var file in allFiles) fileQueue.Enqueue(Path.GetFileName(file));
+            }
+            if (string.Equals(xlsxFile, "kratky vypis", StringComparison.OrdinalIgnoreCase))
+            {
+                shortJSON = true;
+                WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní krátký");
+                continue;
+            }
+            if (string.Equals(xlsxFile, "dlouhy vypis", StringComparison.OrdinalIgnoreCase))
+            {
+                shortJSON = false;
+                WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní dlouhý");
+                continue;
             }
             else
             {
@@ -98,16 +116,14 @@ public class Program
             }
         }
     }
-
-    //TODO nacteni do froty jiz pri zpracovani
-    // Zpracovani vstupu na jednotlive nazvy souboru
+    
     public static List<string> SplitInput(string input)
     {
         var result = new List<string>();
         // nejdříve rozdělíme podle "" a sekundárně poté podle ,
         var parts = input.Split('"', StringSplitOptions.TrimEntries);
         for (var i = 0; i < parts.Length; i++)
-            // vstup v uvozovkách je oddělen sudým počtem
+            // vstup v uvozovkách je oddělen sudým počtem uvozovek
             if (i % 2 == 1)
             {
                 if (!string.IsNullOrWhiteSpace(parts[i]))
@@ -218,14 +234,30 @@ public class Program
                         // Hodnota buňky
                         var value = worksheet.Cells[row, col].Text;
 
-                        // Přidání do seznamu jako klíč-hodnota slovník
-                        dataCollection.Add(new Dictionary<string, string>
+                        // pokud chce u6ivatel pouze krátký výpis neuloži se hodnoty buněk, kde je hodnota null, hodnota 0 se uloží
+                        if (value != "" && shortJSON )
                         {
-                            // Název sloupce
-                            { "Období", columnName },
-                            // Hodnota buňky
-                            { "Počet kusů", value }
-                        });
+                            // Přidání do seznamu jako klíč-hodnota slovník
+                            dataCollection.Add(new Dictionary<string, string>
+                            {
+                                // Název sloupce
+                                { "Období", columnName },
+                                // Hodnota buňky
+                                { "Počet kusů", value }
+                            });
+                        }
+
+                        if(!shortJSON || value != "")
+                        {
+                            // Přidání do seznamu jako klíč-hodnota slovník
+                            dataCollection.Add(new Dictionary<string, string>
+                            {
+                                // Název sloupce
+                                { "Období", columnName },
+                                // Hodnota buňky
+                                { "Počet kusů", value }
+                            });
+                        }
                     }
 
                     // Uložení kolekce do objektu
