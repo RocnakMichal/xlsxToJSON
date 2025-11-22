@@ -125,8 +125,7 @@ public class Program
 
         return result;
     }
-
-    //pridani pripony k souboru
+    
     /** <summary>
      Funkce pro přidání .xlsx přípony k souboru, pokud tak uživatel nedělá.
      Pouze pro pohodlnější prácí s programem
@@ -156,7 +155,7 @@ public class Program
 
         throw new InvalidOperationException("Nelze najít kořenový adresář projektu.");
     }
-
+    
     public static void WriteColorLine(ConsoleColor color, string text)
     {
         Console.ForegroundColor = color;

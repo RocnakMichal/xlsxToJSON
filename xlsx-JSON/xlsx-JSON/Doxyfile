@@ -1105,7 +1105,7 @@ RECURSIVE              = YES
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
-#
+# 
 # Note that relative paths are relative to the directory from which Doxygen is
 # run.
 
