@@ -29,3 +29,12 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
         working-directory: xlsx-JSON
+      - name: Install Doxygen
+        run: sudo apt-get install -y doxygen
+      - name: Generate Documentation
+        run: doxygen Doxyfile
+        working-directory: xlsx-JSON
+
+
+      
+
