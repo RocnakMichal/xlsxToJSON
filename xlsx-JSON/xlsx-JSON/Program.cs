@@ -5,31 +5,25 @@ using Path = System.IO.Path;
 
 namespace xlsx_JSON;
 
-public class Program
+public abstract class Program
 {
-    public static bool shortJSON = false;
+    private static bool _shortJson;
     public static void Main(string[] args)
     {
-        string? xlsxFile;
-       
-
         //fronta pro více vstupů
         var fileQueue = new Queue<string>();
 
         // tabulky jsou ve stejném souboru jako program
         var baseDir = AppContext.BaseDirectory;
         if (baseDir == null) throw new InvalidOperationException("Složka neexistuje");
-
-        Console.WriteLine(baseDir);
+        
         var projectDir = GetProjectRoot(baseDir);
-        Console.WriteLine(projectDir);
-
-
+        
         while (true)
         {
             // vstup z konzole
             Console.WriteLine("Zadejte název souboru, pokud chceš převést více souborů, odděl je čárkou  ");
-            xlsxFile = Console.ReadLine();
+            var xlsxFile = Console.ReadLine();
             if (string.Equals(xlsxFile, "konec", StringComparison.OrdinalIgnoreCase) || xlsxFile == null)
             {
                 Console.WriteLine("Program ukončen.");
@@ -53,13 +47,13 @@ public class Program
            
             if (string.Equals(xlsxFile, "kratky vypis", StringComparison.OrdinalIgnoreCase))
             {
-                shortJSON = true;
+                _shortJson = true;
                 WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní krátký");
                 continue;
             }
             if (string.Equals(xlsxFile, "dlouhy vypis", StringComparison.OrdinalIgnoreCase))
             {
-                shortJSON = false;
+                _shortJson = false;
                 WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní dlouhý");
                 continue;
             }
@@ -113,7 +107,7 @@ public class Program
   </summary>
   <param name="input">Vstup od uživatele z konzole, názvy souborů jsou oddělené</param>
   <returns>Fronta všech souborů pro zpracování</returns> */
-    public static Queue<string> SplitInput(string input)
+    private static Queue<string> SplitInput(string input)
     {
         var result = new Queue<string>();
         // nejdříve rozdělíme podle "" a sekundárně poté podle ,
@@ -158,7 +152,7 @@ public class Program
      <param name="currentDir">Zde se vytvoří program</param>
      <returns>Adresář, kde se nachází spustitelný kód a soubory na převod</returns>
      <exception cref="InvalidOperationException">Nelze najít adresář</exception>*/
-    public static string GetProjectRoot(string currentDir)
+    private static string GetProjectRoot(string currentDir)
     {
         // Iterujeme dokud se nedostaneme na požadovanou složku /xlsx-JSON je složka, kde se nachází program
         var dir = new DirectoryInfo(currentDir);
@@ -179,7 +173,7 @@ public class Program
      </summary>
      <param name="color">Barva textu</param>
      <param name="text">Vlastní text</param>*/
-    public static void WriteColorLine(ConsoleColor color, string text)
+    private static void WriteColorLine(ConsoleColor color, string text)
     {
         Console.ForegroundColor = color;
         Console.WriteLine(text);
@@ -196,10 +190,9 @@ public class Program
     {
         try
         {
-            using (var package = new ExcelPackage(new FileInfo(fileName)))
-            {
-                var workbook = package.Workbook;
-                // ošetření prázdného sešitu
+            using var package = new ExcelPackage(new FileInfo(fileName));
+            var workbook = package.Workbook;
+            // ošetření prázdného sešitu
                 if (workbook == null || workbook.Worksheets.Count == 0)
                 {
                     WriteColorLine(ConsoleColor.Red, $"Soubor '{Path.GetFileName(fileName)}' je prázdný");
@@ -248,7 +241,7 @@ public class Program
                         var value = worksheet.Cells[row, col].Text;
 
                         // pokud chce u6ivatel pouze krátký výpis neuloži se hodnoty buněk, kde je hodnota null, hodnota 0 se uloží
-                        if (value != "" && shortJSON )
+                        if (value != "" &&  _shortJson )
                         {
                             // Přidání do seznamu jako klíč-hodnota slovník
                             dataCollection.Add(new Dictionary<string, string>
@@ -260,7 +253,7 @@ public class Program
                             });
                         }
 
-                        if(!shortJSON || value != "")
+                        else if(! _shortJson || value != "")
                         {
                             // Přidání do seznamu jako klíč-hodnota slovník
                             dataCollection.Add(new Dictionary<string, string>
@@ -287,7 +280,6 @@ public class Program
                 var jsonPath = Path.ChangeExtension(fileName, ".json");
                 File.WriteAllText(jsonPath, jsonResult);
                 WriteColorLine(ConsoleColor.Green, $"JSON je uložen zde: {jsonPath}");
-            }
         }
 
         catch (Exception ex)
