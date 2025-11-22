@@ -50,6 +50,19 @@ public class Program
                 continue;
             }
 
+           
+            if (string.Equals(xlsxFile, "kratky vypis", StringComparison.OrdinalIgnoreCase))
+            {
+                shortJSON = true;
+                WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní krátký");
+                continue;
+            }
+            if (string.Equals(xlsxFile, "dlouhy vypis", StringComparison.OrdinalIgnoreCase))
+            {
+                shortJSON = false;
+                WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní dlouhý");
+                continue;
+            }
             if (string.Equals(xlsxFile, "vse", StringComparison.OrdinalIgnoreCase))
             {
                 //hledá vše, co končí .xlsx, nemusí se nic dolňovat, protože soubory jsou takto uloženy
@@ -63,32 +76,11 @@ public class Program
 
                 foreach (var file in allFiles) fileQueue.Enqueue(Path.GetFileName(file));
             }
-            if (string.Equals(xlsxFile, "kratky vypis", StringComparison.OrdinalIgnoreCase))
-            {
-                shortJSON = true;
-                WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní krátký");
-                continue;
-            }
-            if (string.Equals(xlsxFile, "dlouhy vypis", StringComparison.OrdinalIgnoreCase))
-            {
-                shortJSON = false;
-                WriteColorLine(ConsoleColor.Yellow,"Výpis je nyní dlouhý");
-                continue;
-            }
             else
             {
-                // rozdělení vstupu, delimiter-"," 
-                //string[] fileNames = xlsxFile.Split(',', StringSplitOptions.RemoveEmptyEntries);
-
-                var fileNames = SplitInput(xlsxFile);
-
-                // naplnění fronty
-                foreach (var file in fileNames)
-                    fileQueue.Enqueue(file);
-
-                foreach (var a in fileNames) Console.WriteLine(a);
+                fileQueue = SplitInput(xlsxFile);
             }
-
+            
             while (fileQueue.Count > 0)
             {
                 xlsxFile = fileQueue.Dequeue();
@@ -116,10 +108,14 @@ public class Program
             }
         }
     }
-    
-    public static List<string> SplitInput(string input)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    public static Queue<string> SplitInput(string input)
     {
-        var result = new List<string>();
+        var result = new Queue<string>();
         // nejdříve rozdělíme podle "" a sekundárně poté podle ,
         var parts = input.Split('"', StringSplitOptions.TrimEntries);
         for (var i = 0; i < parts.Length; i++)
@@ -127,7 +123,7 @@ public class Program
             if (i % 2 == 1)
             {
                 if (!string.IsNullOrWhiteSpace(parts[i]))
-                    result.Add(parts[i]);
+                    result.Enqueue(parts[i]);
             }
             else
             {
@@ -136,7 +132,8 @@ public class Program
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(p => p.Trim());
 
-                result.AddRange(subparts);
+                foreach (var item in subparts)
+                    result.Enqueue(item);
             }
 
         return result;
