@@ -108,11 +108,11 @@ public class Program
             }
         }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="input"></param>
-    /// <returns></returns>
+ /** <summary>
+  Nejdříve se oddělí vstupy v "", aby mohl uživatel zpracovat soubory, které obsahují čárku. Poté se zpracují ostatní soubory, jako delimiter se používá čárka
+  </summary>
+  <param name="input">Vstup od uživatele z konzole, názvy souborů jsou oddělené</param>
+  <returns>Fronta všech souborů pro zpracování</returns> */
     public static Queue<string> SplitInput(string input)
     {
         var result = new Queue<string>();
@@ -153,6 +153,11 @@ public class Program
         return fileName;
     }
 
+    /** <summary> Pro použitelnost se vynořujeme z adresáře, kde jsem vytvoří program až do adresáře, kde budeme dále pracovat
+     </summary>
+     <param name="currentDir">Zde se vytvoří program</param>
+     <returns>Adresář, kde se nachází spustitelný kód a soubory na převod</returns>
+     <exception cref="InvalidOperationException">Nelze najít adresář</exception>*/
     public static string GetProjectRoot(string currentDir)
     {
         // Iterujeme dokud se nedostaneme na požadovanou složku /xlsx-JSON je složka, kde se nachází program
@@ -169,6 +174,11 @@ public class Program
         throw new InvalidOperationException("Nelze najít kořenový adresář projektu.");
     }
     
+    /** <summary>
+     Vypíše text barevně
+     </summary>
+     <param name="color">Barva textu</param>
+     <param name="text">Vlastní text</param>*/
     public static void WriteColorLine(ConsoleColor color, string text)
     {
         Console.ForegroundColor = color;
@@ -176,6 +186,12 @@ public class Program
         Console.ResetColor();
     }
 
+    /** <summary>
+    Funkce na převod .xlsx souborů do formátu .JSON
+    Postupuje po jednotilivých buńkách
+    První řádek definuje názvy v kolekci
+     </summary>
+     <param name="fileName">Název souboru, který chceme převést</param>*/
     public static void ProcessExcelFile(string fileName)
     {
         try
