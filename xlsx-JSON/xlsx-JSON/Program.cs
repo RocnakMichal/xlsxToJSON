@@ -107,7 +107,7 @@ public abstract class Program
   </summary>
   <param name="input">Vstup od uživatele z konzole, názvy souborů jsou oddělené</param>
   <returns>Fronta všech souborů pro zpracování</returns> */
-    private static Queue<string> SplitInput(string input)
+    public static Queue<string> SplitInput(string input)
     {
         var result = new Queue<string>();
         // nejdříve rozdělíme podle "" a sekundárně poté podle ,
@@ -152,7 +152,7 @@ public abstract class Program
      <param name="currentDir">Zde se vytvoří program</param>
      <returns>Adresář, kde se nachází spustitelný kód a soubory na převod</returns>
      <exception cref="InvalidOperationException">Nelze najít adresář</exception>*/
-    private static string GetProjectRoot(string currentDir)
+    public static string GetProjectRoot(string currentDir)
     {
         // Iterujeme dokud se nedostaneme na požadovanou složku /xlsx-JSON je složka, kde se nachází program
         var dir = new DirectoryInfo(currentDir);
@@ -173,7 +173,7 @@ public abstract class Program
      </summary>
      <param name="color">Barva textu</param>
      <param name="text">Vlastní text</param>*/
-    private static void WriteColorLine(ConsoleColor color, string text)
+    public static void WriteColorLine(ConsoleColor color, string text)
     {
         Console.ForegroundColor = color;
         Console.WriteLine(text);
